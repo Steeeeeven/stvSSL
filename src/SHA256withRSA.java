@@ -1,10 +1,9 @@
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
+import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SHA256withRSA {
     /*用私钥加签*/
@@ -41,5 +40,22 @@ public class SHA256withRSA {
         signature.update(srcData);
         boolean result = signature.verify(Base64.getDecoder().decode(targetSign));
         return result + "";
+    }
+
+    public static Map<String, String> generateKeyPair(){
+        Map<String, String> keyPairMap = new HashMap<String, String>();
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048, new SecureRandom());
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+            keyPairMap.put("publicKey", Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+            keyPairMap.put("privateKey", Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return keyPairMap;
     }
 }
